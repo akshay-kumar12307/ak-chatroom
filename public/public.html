@@ -7,29 +7,38 @@
 </head>
 <body>
 
-<!-- HEADER -->
-<div class="chat-header">
+<header class="chat-header">
   <button id="exitBtn" class="icon-btn">←</button>
   <div class="room-title">Public Room</div>
   <button id="menuBtn" class="icon-btn">☰</button>
-</div>
+</header>
 
-<!-- MEMBERS -->
 <div id="members" class="members hidden"></div>
 
-<!-- MESSAGES -->
-<div id="messages" class="messages"></div>
+<main id="messages" class="messages"></main>
 
-<!-- INPUT BAR -->
-<div class="chat-input">
-  <button id="fileBtn" class="icon-btn">📎</button>
-  <button id="voiceBtn" class="icon-btn">🎤</button>
-  <input id="msgInput" type="text" placeholder="Type a message..." />
-  <button id="sendBtn" class="send-btn">➤</button>
+<!-- Voice preview (hidden until recording stops) -->
+<div id="voicePreview" class="voice-preview hidden">
+  <audio id="voiceAudio" controls></audio>
+  <button id="sendVoiceBtn" class="primary-btn">Send</button>
+  <button id="cancelVoiceBtn" class="secondary-btn">Cancel</button>
 </div>
 
-<!-- HIDDEN FILE INPUT -->
-<input type="file" id="fileInput" style="display:none" />
+<footer class="chat-input">
+  <button id="fileBtn" class="icon-btn" type="button">📎</button>
+  <button id="voiceBtn" class="icon-btn mic" type="button">🎤</button>
+
+  <input
+    id="msgInput"
+    type="text"
+    placeholder="Type a message…"
+    autocomplete="off"
+  />
+
+  <button id="sendBtn" class="send-btn" type="button">➤</button>
+</footer>
+
+<input type="file" id="fileInput" hidden />
 
 <script src="/socket.io/socket.io.js"></script>
 <script src="js/public.js"></script>

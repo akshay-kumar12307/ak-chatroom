@@ -1,70 +1,62 @@
+/* ===== PAGE LAYOUT ===== */
 body {
-  font-family: Arial;
+  margin: 0;
+  font-family: Arial, sans-serif;
   background: #f4f4f4;
-}
-
-.center-box {
-  width: 300px;
-  margin: 150px auto;
-  text-align: center;
-}
-
-input, button {
-  width: 100%;
-  padding: 10px;
-  margin: 10px 0;
-}
-
-.chat-header {
+  height: 100vh;
   display: flex;
-  justify-content: space-between;
-  padding: 10px;
-  background: #ddd;
+  flex-direction: column;
 }
 
-.messages {
-  height: 70vh;
-  overflow-y: auto;
-  padding: 10px;
-}
-
-.input-box {
-  display: flex;
-}
-
-.input-box input {
-  flex: 1;
-}
-
-.members {
-  position: absolute;
-  right: 10px;
-  top: 50px;
-  background: white;
-  padding: 10px;
-  border: 1px solid #ccc;
-}
-
-.hidden {
-  display: none;
-}
-
-/* CHAT HEADER */
+/* HEADER */
 .chat-header {
+  flex-shrink: 0;
   display: flex;
   align-items: center;
   justify-content: space-between;
   padding: 10px;
   background: #ededed;
-  font-weight: bold;
+  border-bottom: 1px solid #ccc;
 }
 
-.room-title {
+/* MAIN CHAT AREA */
+.messages {
+  flex: 1;                 /* ✅ takes remaining height */
+  overflow-y: auto;
+  padding: 10px;
+  background: #f9f9f9;
+}
+
+/* VOICE PREVIEW */
+.voice-preview {
+  flex-shrink: 0;
+  background: #fafafa;
+  border-top: 1px solid #ccc;
+  padding: 10px;
+  display: flex;
+  gap: 10px;
+  align-items: center;
+}
+
+/* INPUT BAR (ALWAYS VISIBLE) */
+.chat-input {
+  flex-shrink: 0;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 8px;
+  background: white;
+  border-top: 1px solid #ccc;
+}
+
+.chat-input input {
   flex: 1;
-  text-align: center;
+  padding: 8px;
+  border-radius: 20px;
+  border: 1px solid #ccc;
 }
 
-/* ICON BUTTONS */
+/* BUTTONS */
 .icon-btn {
   width: 36px;
   height: 36px;
@@ -75,33 +67,6 @@ input, button {
   font-size: 18px;
 }
 
-/* CHAT MESSAGES */
-.messages {
-  height: calc(100vh - 120px);
-  overflow-y: auto;
-  padding: 10px;
-  background: #f9f9f9;
-}
-
-/* INPUT AREA */
-.chat-input {
-  display: flex;
-  align-items: center;
-  padding: 8px;
-  gap: 6px;
-  background: #fff;
-  border-top: 1px solid #ccc;
-}
-
-.chat-input input {
-  flex: 1;
-  padding: 8px;
-  border-radius: 20px;
-  border: 1px solid #ccc;
-  outline: none;
-}
-
-/* SEND BUTTON */
 .send-btn {
   width: 36px;
   height: 36px;
@@ -112,134 +77,157 @@ input, button {
   cursor: pointer;
 }
 
-/* MEMBERS PANEL */
-.members {
-  position: absolute;
-  top: 55px;
-  right: 10px;
-  width: 160px;
-  background: white;
-  border: 1px solid #ccc;
-  padding: 10px;
-  font-size: 14px;
-  z-index: 9999; /* IMPORTANT */
-}
-
+/* HIDDEN */
 .hidden {
   display: none;
 }
-
-/* ===== RESPONSIVE DESIGN ===== */
-
-@media (max-width: 768px) {
-
-  body {
-    margin: 0;
-  }
-
-  .center-box {
-    width: 90%;
-    margin-top: 120px;
-  }
-
-  .chat-header {
-    padding: 8px;
-    font-size: 16px;
-  }
-
-  .icon-btn,
-  .send-btn {
-    width: 34px;
-    height: 34px;
-  }
-
-  .messages {
-    height: calc(100vh - 110px);
-    padding: 8px;
-    font-size: 14px;
-  }
-
-  .chat-input {
-    padding: 6px;
-    gap: 5px;
-  }
-
-  .chat-input input {
-    font-size: 14px;
-    padding: 7px;
-  }
-
-  .members {
-    width: 70%;
-    right: 5px;
-  }
-}
-
-@media (max-width: 480px) {
-
-  .room-title {
-    font-size: 14px;
-  }
-
-  .icon-btn svg,
-  .send-btn svg {
-    width: 16px;
-    height: 16px;
-  }
-}
-/* ===== CHAT BUBBLES ===== */
-
-.message-row {
+/* ===== PAGE LAYOUT ===== */
+body {
+  margin: 0;
+  font-family: Arial, sans-serif;
+  background: #f4f4f4;
+  height: 100vh;
   display: flex;
-  align-items: flex-end;
-  margin-bottom: 10px;
+  flex-direction: column;
 }
 
-.message-row.me {
-  justify-content: flex-end;
+/* HEADER */
+.chat-header {
+  flex-shrink: 0;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 10px;
+  background: #ededed;
+  border-bottom: 1px solid #ccc;
 }
 
-.message-row.other {
-  justify-content: flex-start;
+/* MAIN CHAT AREA */
+.messages {
+  flex: 1;                 /* ✅ takes remaining height */
+  overflow-y: auto;
+  padding: 10px;
+  background: #f9f9f9;
 }
 
-.avatar {
-  width: 32px;
-  height: 32px;
+/* VOICE PREVIEW */
+.voice-preview {
+  flex-shrink: 0;
+  background: #fafafa;
+  border-top: 1px solid #ccc;
+  padding: 10px;
+  display: flex;
+  gap: 10px;
+  align-items: center;
+}
+
+/* INPUT BAR (ALWAYS VISIBLE) */
+.chat-input {
+  flex-shrink: 0;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 8px;
+  background: white;
+  border-top: 1px solid #ccc;
+}
+
+.chat-input input {
+  flex: 1;
+  padding: 8px;
+  border-radius: 20px;
+  border: 1px solid #ccc;
+}
+
+/* BUTTONS */
+.icon-btn {
+  width: 36px;
+  height: 36px;
   border-radius: 50%;
-  margin: 0 6px;
+  border: none;
+  background: #ddd;
+  cursor: pointer;
+  font-size: 18px;
 }
 
-.bubble {
-  max-width: 65%;
-  padding: 8px 10px;
+.send-btn {
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  border: none;
+  background: #4caf50;
+  color: white;
+  cursor: pointer;
+}
+
+/* HIDDEN */
+.hidden {
+  display: none;
+}
+/* ===== ROOMS PAGE ===== */
+.rooms-page {
+  height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: linear-gradient(135deg, #43cea2, #185a9d);
+}
+
+.rooms-card {
+  background: white;
+  padding: 30px;
+  border-radius: 16px;
+  width: 320px;
+  text-align: center;
+  box-shadow: 0 15px 40px rgba(0,0,0,0.2);
+}
+
+.rooms-card h2 {
+  margin-bottom: 25px;
+  color: #333;
+}
+
+.rooms-card button {
+  width: 100%;
+  padding: 14px;
+  margin-bottom: 15px;
+  border-radius: 25px;
+  border: none;
+  font-size: 16px;
+  cursor: pointer;
+}
+
+#publicBtn {
+  background: #4caf50;
+  color: white;
+}
+
+#privateBtn {
+  background: #ff9800;
+  color: white;
+}
+
+.rooms-card button:hover {
+  opacity: 0.9;
+}
+.members {
+  position: absolute;
+  top: 60px;
+  right: 10px;
+  width: 180px;
+  background: white;
   border-radius: 12px;
-  background: #eaeaea;
+  box-shadow: 0 10px 30px rgba(0,0,0,0.15);
+  padding: 10px;
+  z-index: 1000;
+}
+
+.members div {
+  padding: 8px;
+  border-bottom: 1px solid #eee;
   font-size: 14px;
 }
 
-.message-row.me .bubble {
-  background: #d1f0ff;
-}
-
-.name {
-  font-weight: bold;
-  font-size: 12px;
-}
-
-.text {
-  margin: 4px 0;
-}
-
-.time {
-  font-size: 10px;
-  color: gray;
-  text-align: right;
-}
-
-/* Mobile tweaks */
-@media (max-width: 480px) {
-  .bubble {
-    max-width: 80%;
-  }
+.members div:last-child {
+  border-bottom: none;
 }

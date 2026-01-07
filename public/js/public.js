@@ -8,49 +8,43 @@ document.addEventListener("DOMContentLoaded", () => {
     return;
   }
 
+  // ---------- ELEMENTS ----------
   const messagesDiv = document.getElementById("messages");
-  const input = document.getElementById("msgInput");
+  const msgInput = document.getElementById("msgInput");
   const sendBtn = document.getElementById("sendBtn");
-  const menuBtn = document.getElementById("menuBtn");
-  const exitBtn = document.getElementById("exitBtn");
-  const membersDiv = document.getElementById("members");
   const fileBtn = document.getElementById("fileBtn");
   const fileInput = document.getElementById("fileInput");
   const voiceBtn = document.getElementById("voiceBtn");
+  const voicePreview = document.getElementById("voicePreview");
+  const voiceAudio = document.getElementById("voiceAudio");
+  const sendVoiceBtn = document.getElementById("sendVoiceBtn");
+  const cancelVoiceBtn = document.getElementById("cancelVoiceBtn");
+  const menuBtn = document.getElementById("menuBtn");
+  const exitBtn = document.getElementById("exitBtn");
+  const membersDiv = document.getElementById("members");
 
-  // Join room
   socket.emit("joinPublic", username);
 
-  // ---------------- RENDER TEXT ----------------
-  function renderMessage(msg) {
+  // ---------- RENDER ----------
+  function render(msg) {
     const div = document.createElement("div");
-    div.className = "message";
-    div.innerHTML = `
-      <strong>${msg.user}</strong>
-      <span class="time">${msg.time}</span>
-      <div>${msg.text}</div>
-    `;
-    messagesDiv.appendChild(div);
-    messagesDiv.scrollTop = messagesDiv.scrollHeight;
-  }
+    div.className = "message-card";
 
-  // ---------------- RENDER FILE ----------------
-  function renderFile(msg) {
-    const div = document.createElement("div");
-    div.className = "message";
-
-    let content;
-    if (msg.file.type.startsWith("image/")) {
-      content = `<img src="${msg.file.data}" style="max-width:200px;border-radius:8px">`;
-    } else {
-      content = `<a href="${msg.file.data}" download="${msg.file.name}">
-        📎 ${msg.file.name}
-      </a>`;
+    let content = "";
+    if (msg.type === "text") {
+      content = `<p>${msg.text}</p>`;
+    }
+    if (msg.type === "file") {
+      content = msg.file.type.startsWith("image/")
+        ? `<img src="${msg.file.data}" style="max-width:220px;border-radius:8px">`
+        : `<a href="${msg.file.data}" download>${msg.file.name}</a>`;
+    }
+    if (msg.type === "voice") {
+      content = `<audio controls src="${msg.audio.data}"></audio>`;
     }
 
     div.innerHTML = `
       <strong>${msg.user}</strong>
-      <span class="time">${msg.time}</span>
       <div>${content}</div>
     `;
 
@@ -58,80 +52,117 @@ document.addEventListener("DOMContentLoaded", () => {
     messagesDiv.scrollTop = messagesDiv.scrollHeight;
   }
 
-  // ---------------- HISTORY ----------------
-  socket.on("history", messages => {
+  socket.on("history", msgs => {
     messagesDiv.innerHTML = "";
-    messages.forEach(msg => {
-      if (msg.file) renderFile(msg);
-      else renderMessage(msg);
-    });
+    msgs.forEach(render);
   });
 
-  socket.on("newMessage", renderMessage);
-  socket.on("newFile", renderFile);
+  socket.on("newMessage", render);
+  socket.on("newFile", render);
+  socket.on("newVoice", render);
 
-  // ---------------- SEND TEXT ----------------
-  function sendMessage() {
-    const text = input.value.trim();
-    if (!text) return;
+  // ===== ONLINE MEMBERS =====
+socket.on("members", users => {
+  membersDiv.innerHTML = "";
 
-    socket.emit("sendMessage", { text });
-    input.value = "";
-    input.focus();
+  if (!users || users.length === 0) {
+    membersDiv.innerHTML = "<div>No users online</div>";
+    return;
   }
 
-  sendBtn.addEventListener("click", sendMessage);
-  input.addEventListener("keydown", e => {
-    if (e.key === "Enter") sendMessage();
+  users.forEach(name => {
+    const div = document.createElement("div");
+    div.textContent = name;
+    membersDiv.appendChild(div);
   });
+});
 
-  // ---------------- FILE SHARING ----------------
-  fileBtn.addEventListener("click", () => fileInput.click());
+  // ---------- TEXT ----------
+  sendBtn.onclick = () => {
+    const text = msgInput.value.trim();
+    if (!text) return;
+    socket.emit("sendMessage", { text });
+    msgInput.value = "";
+    msgInput.focus();
+  };
 
-  fileInput.addEventListener("change", () => {
+  msgInput.onkeydown = e => {
+    if (e.key === "Enter") {
+      e.preventDefault();
+      sendBtn.click();
+    }
+  };
+
+  // ---------- FILE ----------
+  fileBtn.onclick = () => fileInput.click();
+
+  fileInput.onchange = () => {
     const file = fileInput.files[0];
     if (!file) return;
-
-    if (file.size > 2 * 1024 * 1024) {
-      alert("Max file size is 2MB");
-      fileInput.value = "";
-      input.focus();
-      return;
-    }
 
     const reader = new FileReader();
     reader.onload = () => {
       socket.emit("sendFile", {
         name: file.name,
-        type: file.type,
-        size: file.size,
+        type: file.type || "application/octet-stream",
         data: reader.result
       });
-      input.focus(); // 🔑 FIX: return focus to input
     };
-
     reader.readAsDataURL(file);
     fileInput.value = "";
-  });
+  };
 
-  // ---------------- VOICE (PLACEHOLDER) ----------------
-  voiceBtn.addEventListener("click", () => {
-    alert("Voice messages coming next 🚀");
-  });
+  // ---------- 🎤 VOICE (FINAL FIX) ----------
+  let recorder = null;
+  let lastBlob = null;
 
-  // ---------------- MEMBERS ----------------
-  socket.on("members", users => {
-    membersDiv.innerHTML =
-      "<b>Members</b><br><br>" + users.join("<br>");
-  });
+  voiceBtn.onclick = async () => {
+    if (!recorder || recorder.state === "inactive") {
+      const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+      recorder = new MediaRecorder(stream);
+      lastBlob = null;
 
-  // ---------------- UI CONTROLS ----------------
-  menuBtn.addEventListener("click", () => {
-    membersDiv.classList.toggle("hidden");
-  });
+      recorder.start();
+      voiceBtn.textContent = "⏹";
 
-  exitBtn.addEventListener("click", () => {
-    window.location.href = "rooms.html";
-  });
+      const chunks = [];
+      recorder.ondataavailable = e => chunks.push(e.data);
 
+      recorder.onstop = () => {
+        lastBlob = new Blob(chunks, { type: "audio/webm" });
+        voiceAudio.src = URL.createObjectURL(lastBlob);
+        voicePreview.classList.remove("hidden");
+         voiceBtn.textContent = "🎤";
+      };
+
+    } else {
+      recorder.stop();
+    }
+  };
+
+  sendVoiceBtn.onclick = () => {
+    if (!lastBlob) return;
+
+    const reader = new FileReader();
+    reader.onload = () => {
+      socket.emit("sendVoice", { data: reader.result });
+    };
+    reader.readAsDataURL(lastBlob);
+
+    clearVoice();
+  };
+
+  cancelVoiceBtn.onclick = clearVoice;
+
+function clearVoice() {
+  lastBlob = null;
+  voiceAudio.src = "";
+  voicePreview.classList.add("hidden");
+ }
+
+  // ---------- UI ----------
+ menuBtn.onclick = () => {
+  membersDiv.classList.toggle("hidden");
+};
+ exitBtn.onclick = () => window.location.href = "rooms.html";
 });

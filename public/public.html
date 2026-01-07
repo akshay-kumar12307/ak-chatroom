@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Public Room</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+
+<!-- HEADER -->
+<div class="chat-header">
+  <button id="exitBtn" class="icon-btn">←</button>
+  <div class="room-title">Public Room</div>
+  <button id="menuBtn" class="icon-btn">☰</button>
+</div>
+
+<!-- MEMBERS -->
+<div id="members" class="members hidden"></div>
+
+<!-- MESSAGES -->
+<div id="messages" class="messages"></div>
+
+<!-- INPUT BAR -->
+<div class="chat-input">
+  <button id="fileBtn" class="icon-btn">📎</button>
+  <button id="voiceBtn" class="icon-btn">🎤</button>
+  <input id="msgInput" type="text" placeholder="Type a message..." />
+  <button id="sendBtn" class="send-btn">➤</button>
+</div>
+
+<!-- HIDDEN FILE INPUT -->
+<input type="file" id="fileInput" style="display:none" />
+
+<script src="/socket.io/socket.io.js"></script>
+<script src="js/public.js"></script>
+</body>
+</html>

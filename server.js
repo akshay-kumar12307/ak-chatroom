@@ -13,6 +13,7 @@ app.get("/", (req, res) => {
 });
 
 // In-memory public room
+let cleanupTimer = null;
 const publicRoom = {
   users: new Map(),
   messages: []
@@ -24,7 +25,12 @@ io.on("connection", socket => {
   
   // Join public room
   socket.on("joinPublic", username => {
-    publicRoom.users.set(socket.id, username);
+    // cancel auto-delete if someone joins back
+if (cleanupTimer) {
+  clearTimeout(cleanupTimer);
+  cleanupTimer = null;
+}
+ publicRoom.users.set(socket.id, username);
     io.emit("members", Array.from(publicRoom.users.values()));
     socket.emit("history", publicRoom.messages);
   });
@@ -83,10 +89,17 @@ io.on("connection", socket => {
     socket.broadcast.emit("stopTyping");
   });
 
-  socket.on("disconnect", () => {
-    publicRoom.users.delete(socket.id);
-    io.emit("members", Array.from(publicRoom.users.values()));
-  });
+socket.on("disconnect", () => {
+  publicRoom.users.delete(socket.id);
+  io.emit("members", Array.from(publicRoom.users.values()));
+
+  // if room is empty → start auto-delete timer
+  if (publicRoom.users.size === 0) {
+    cleanupTimer = setTimeout(() => {
+      publicRoom.messages = [];
+      console.log("🧹 Public room messages auto-deleted after 3 hours of inactivity");
+    }, 3 * 60 * 60 * 1000); // 3 hours
+  }
 });
 
 const PORT = process.env.PORT || 3000;

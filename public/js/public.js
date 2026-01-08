@@ -22,6 +22,8 @@ document.addEventListener("DOMContentLoaded", () => {
   const menuBtn = document.getElementById("menuBtn");
   const exitBtn = document.getElementById("exitBtn");
   const membersDiv = document.getElementById("members");
+const typingIndicator = document.getElementById("typingIndicator");
+let typingTimeout;
 
   socket.emit("joinPublic", username);
 
@@ -159,6 +161,22 @@ function clearVoice() {
   voiceAudio.src = "";
   voicePreview.classList.add("hidden");
  }
+msgInput.addEventListener("input", () => {
+  socket.emit("typing", username);
+
+  clearTimeout(typingTimeout);
+  typingTimeout = setTimeout(() => {
+    socket.emit("stopTyping");
+  }, 800);
+});
+socket.on("typing", name => {
+  typingIndicator.textContent = `${name} is typing...`;
+  typingIndicator.classList.remove("hidden");
+});
+
+socket.on("stopTyping", () => {
+  typingIndicator.classList.add("hidden");
+});
 
   // ---------- UI ----------
  menuBtn.onclick = () => {

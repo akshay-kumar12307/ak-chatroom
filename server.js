@@ -21,6 +21,7 @@ const publicRoom = {
 io.on("connection", socket => {
   console.log("User connected:", socket.id);
 
+  
   // Join public room
   socket.on("joinPublic", username => {
     publicRoom.users.set(socket.id, username);
@@ -71,6 +72,15 @@ io.on("connection", socket => {
 
     publicRoom.messages.push(msg);
     io.emit("newVoice", msg);
+  });
+
+    // ===== TYPING INDICATOR =====
+  socket.on("typing", username => {
+    socket.broadcast.emit("typing", username);
+  });
+
+  socket.on("stopTyping", () => {
+    socket.broadcast.emit("stopTyping");
   });
 
   socket.on("disconnect", () => {

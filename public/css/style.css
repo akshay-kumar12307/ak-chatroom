@@ -231,3 +231,10 @@ body {
 .members div:last-child {
   border-bottom: none;
 }
+/* ===== TYPING INDICATOR ===== */
+.typing-indicator {
+  font-size: 13px;
+  color: #666;
+  padding: 6px 12px;
+  font-style: italic;
+}

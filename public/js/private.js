@@ -20,8 +20,11 @@ document.addEventListener("DOMContentLoaded", () => {
 
   /* ---------- STATE ---------- */
   const username = localStorage.getItem("username");
-  if (!username) {
-    window.location.href = "/";
+  const roomId = localStorage.getItem("roomId");
+  const roomName = localStorage.getItem("roomName");
+
+  if (!username || !roomId) {
+    window.location.href = "rooms.html";
     return;
   }
 
@@ -36,23 +39,27 @@ document.addEventListener("DOMContentLoaded", () => {
   const voiceAudio = document.getElementById("voiceAudio");
   const sendVoiceBtn = document.getElementById("sendVoiceBtn");
   const cancelVoiceBtn = document.getElementById("cancelVoiceBtn");
-  const membersDiv = document.getElementById("members");
   const typingIndicator = document.getElementById("typingIndicator");
+  const membersDiv = document.getElementById("members");
   const menuBtn = document.getElementById("menuBtn");
   const exitBtn = document.getElementById("exitBtn");
+  const roomTitle = document.getElementById("roomTitle");
+
+  if (roomTitle) roomTitle.textContent = roomName;
 
   let typingTimeout;
   let recorder = null;
   let lastBlob = null;
 
-  /* ---------- JOIN PUBLIC ---------- */
+  /* ---------- JOIN ---------- */
   socket.emit("joinPublic", username);
+  socket.emit("joinPrivateRoomSocket", roomId);
 
   /* ================== TEXT ================== */
   function sendText() {
     const text = msgInput.value.trim();
     if (!text) return;
-    socket.emit("sendMessage", { text });
+    socket.emit("sendRoomMessage", { roomId, text });
     msgInput.value = "";
   }
 
@@ -66,10 +73,10 @@ document.addEventListener("DOMContentLoaded", () => {
   });
 
   msgInput.addEventListener("input", () => {
-    socket.emit("typing", username);
+    socket.emit("privateTyping", { roomId, name: username });
     clearTimeout(typingTimeout);
     typingTimeout = setTimeout(() => {
-      socket.emit("stopTyping");
+      socket.emit("privateStopTyping", roomId);
     }, 800);
   });
 
@@ -80,31 +87,17 @@ document.addEventListener("DOMContentLoaded", () => {
     const file = fileInput.files[0];
     if (!file) return;
 
-    const uploadProgress = document.getElementById("uploadProgress");
-    const uploadBar = document.getElementById("uploadBar");
-
-    uploadProgress.classList.remove("hidden");
-    uploadBar.style.width = "0%";
-
     const reader = new FileReader();
-
-    reader.onprogress = e => {
-      if (e.lengthComputable) {
-        uploadBar.style.width = (e.loaded / e.total) * 100 + "%";
-      }
-    };
-
     reader.onload = () => {
-      socket.emit("sendFile", {
-        name: file.name,
-        type: file.type,
-        data: reader.result
+      socket.emit("sendPrivateFile", {
+        roomId,
+        file: {
+          name: file.name,
+          type: file.type,
+          data: reader.result
+        }
       });
-
-      uploadBar.style.width = "100%";
-      setTimeout(() => uploadProgress.classList.add("hidden"), 400);
     };
-
     reader.readAsDataURL(file);
     fileInput.value = "";
   };
@@ -138,7 +131,10 @@ document.addEventListener("DOMContentLoaded", () => {
 
     const reader = new FileReader();
     reader.onload = () => {
-      socket.emit("sendVoice", { data: reader.result });
+      socket.emit("sendPrivateVoice", {
+        roomId,
+        audio: { data: reader.result }
+      });
     };
     reader.readAsDataURL(lastBlob);
     clearVoice();
@@ -193,27 +189,30 @@ document.addEventListener("DOMContentLoaded", () => {
   }
 
   /* ================== SOCKET EVENTS ================== */
-  socket.on("history", msgs => msgs.forEach(render));
-  socket.on("newMessage", render);
-  socket.on("newFile", render);
-  socket.on("newVoice", render);
+  socket.on("roomHistory", msgs => msgs.forEach(render));
+  socket.on("newRoomMessage", render);
+  socket.on("newPrivateFile", render);
+  socket.on("newPrivateVoice", render);
 
   socket.on("messageDeleted", ({ messageId }) => {
     const el = document.querySelector(`[data-id="${messageId}"]`);
     if (el) el.querySelector(".bubble").innerHTML = "<i>🗑️ This message was deleted</i>";
   });
 
-  socket.on("members", users => {
-    membersDiv.innerHTML = users.map(u => `<div>${u}</div>`).join("");
-  });
-
-  socket.on("typing", name => {
+  socket.on("privateTyping", name => {
     typingIndicator.textContent = `${name} is typing...`;
     typingIndicator.classList.remove("hidden");
   });
 
-  socket.on("stopTyping", () => typingIndicator.classList.add("hidden"));
+  socket.on("privateStopTyping", () => {
+    typingIndicator.classList.add("hidden");
+  });
 
+  socket.on("privateMembers", users => {
+    membersDiv.innerHTML = users.map(u => `<div>${u}</div>`).join("");
+  });
+
+  /* ================== UI ================== */
   menuBtn.onclick = () => membersDiv.classList.toggle("hidden");
   exitBtn.onclick = () => window.location.href = "rooms.html";
 });

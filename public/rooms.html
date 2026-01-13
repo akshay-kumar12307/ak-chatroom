@@ -16,15 +16,21 @@
     <button id="privateBtn">Private</button>
   </div>
 
-  <script>
-    document.getElementById("publicBtn").onclick = () => {
-      window.location.href = "public.html";
-    };
+  <div class="rooms-card hidden" id="privatePanel">
+    <h2>Private Rooms</h2>
 
-    document.getElementById("privateBtn").onclick = () => {
-      alert("Private chat coming next 🚀");
-    };
-  </script>
+    <input id="roomName" placeholder="Room name" />
+    <input id="roomPass" type="password" placeholder="Password" />
 
+    <button id="createRoomBtn">Create Room</button>
+
+    <hr />
+
+    <h3>Join Room</h3>
+    <div id="roomsList"></div>
+  </div>
+
+  <script src="/socket.io/socket.io.js"></script>
+  <script src="js/rooms.js"></script>
 </body>
 </html>

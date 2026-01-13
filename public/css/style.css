@@ -1,0 +1,249 @@
+/* ===== PAGE LAYOUT ===== */
+body {
+  margin: 0;
+  font-family: Arial, sans-serif;
+  background: #f4f4f4;
+  height: 100vh;
+  display: flex;
+  flex-direction: column;
+}
+
+/* HEADER */
+.chat-header {
+  flex-shrink: 0;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 10px;
+  background: #ededed;
+  border-bottom: 1px solid #ccc;
+}
+
+/* MAIN CHAT AREA */
+.messages {
+  flex: 1;
+  overflow-y: auto;
+  padding: 10px;
+  background: #e5ddd5;
+}
+
+/* VOICE PREVIEW */
+.voice-preview {
+  flex-shrink: 0;
+  background: #fafafa;
+  border-top: 1px solid #ccc;
+  padding: 10px;
+  display: flex;
+  gap: 10px;
+  align-items: center;
+}
+
+/* INPUT BAR */
+.chat-input {
+  flex-shrink: 0;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 8px;
+  background: white;
+  border-top: 1px solid #ccc;
+}
+
+.chat-input input {
+  flex: 1;
+  padding: 8px;
+  border-radius: 20px;
+  border: 1px solid #ccc;
+}
+
+/* BUTTONS */
+.icon-btn {
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  border: none;
+  background: #ddd;
+  cursor: pointer;
+  font-size: 18px;
+}
+
+.send-btn {
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  border: none;
+  background: #4caf50;
+  color: white;
+  cursor: pointer;
+}
+
+/* HIDDEN */
+.hidden {
+  display: none;
+}
+
+/* ===== MEMBERS LIST ===== */
+.members {
+  position: absolute;
+  top: 60px;
+  right: 10px;
+  width: 180px;
+  background: white;
+  border-radius: 12px;
+  box-shadow: 0 10px 30px rgba(0,0,0,0.15);
+  padding: 10px;
+  z-index: 1000;
+}
+
+.members div {
+  padding: 8px;
+  border-bottom: 1px solid #eee;
+  font-size: 14px;
+}
+
+.members div:last-child {
+  border-bottom: none;
+}
+
+/* ===== TYPING INDICATOR ===== */
+.typing-indicator {
+  font-size: 13px;
+  color: #666;
+  padding: 6px 12px;
+  font-style: italic;
+}
+
+/* ===== CHAT BUBBLES ===== */
+.message {
+  display: flex;
+  margin-bottom: 10px;
+}
+
+.message.me {
+  justify-content: flex-end;
+}
+
+.message.other {
+  justify-content: flex-start;
+}
+
+/* Avatar */
+.avatar {
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  background: #4caf50;
+  color: #fff;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: bold;
+  margin-right: 8px;
+  text-transform: uppercase;
+}
+
+/* Bubble */
+.bubble {
+  max-width: 70%;
+  padding: 10px 12px;
+  border-radius: 16px;
+  background: #fff;
+  word-wrap: break-word;
+}
+
+.message.me .bubble {
+  background: #dcf8c6;
+}
+
+.username {
+  font-size: 12px;
+  font-weight: bold;
+  margin-bottom: 4px;
+}
+
+.time {
+  font-size: 10px;
+  color: gray;
+  text-align: right;
+  margin-top: 4px;
+}
+
+.bubble img {
+  display: block;
+  margin-top: 5px;
+  border-radius: 8px;
+  max-width: 200px;
+}
+
+.bubble audio {
+  width: 200px;
+  margin-top: 5px;
+}
+
+/* ===== UPLOAD PROGRESS ===== */
+.upload-progress {
+  height: 6px;
+  width: 100%;
+  background: #ddd;
+  margin-top: 5px;
+  border-radius: 4px;
+  overflow: hidden;
+}
+
+.upload-progress.hidden {
+  display: none;
+}
+
+#uploadBar {
+  height: 100%;
+  width: 0%;
+  background: #4caf50;
+  transition: width 0.2s ease;
+}
+
+/* ===== ROOMS PAGE ===== */
+.rooms-page {
+  height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: linear-gradient(135deg, #43cea2, #185a9d);
+}
+
+.rooms-card {
+  background: white;
+  padding: 30px;
+  border-radius: 16px;
+  width: 320px;
+  text-align: center;
+  box-shadow: 0 15px 40px rgba(0,0,0,0.2);
+}
+
+.rooms-card h2 {
+  margin-bottom: 25px;
+  color: #333;
+}
+
+.rooms-card button {
+  width: 100%;
+  padding: 14px;
+  margin-bottom: 15px;
+  border-radius: 25px;
+  border: none;
+  font-size: 16px;
+  cursor: pointer;
+}
+
+#publicBtn {
+  background: #4caf50;
+  color: white;
+}
+
+#privateBtn {
+  background: #ff9800;
+  color: white;
+}
+
+.rooms-card button:hover {
+  opacity: 0.9;
+}

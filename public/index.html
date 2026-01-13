@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Enter Chat</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <link rel="stylesheet" href="css/style.css" />
+</head>
+
+<body class="rooms-page">
+
+  <div class="rooms-card">
+    <h2>Enter your name</h2>
+
+    <input
+      type="text"
+      id="usernameInput"
+      placeholder="Your name"
+      autocomplete="off"
+      style="width:100%;padding:12px;margin-bottom:15px;border-radius:20px;border:1px solid #ccc;"
+    />
+
+    <button id="enterBtn">Enter</button>
+  </div>
+
+  <script>
+    const input = document.getElementById("usernameInput");
+    const btn = document.getElementById("enterBtn");
+
+    function enterChat() {
+      const name = input.value.trim();
+      if (!name) return alert("Enter your name");
+      localStorage.setItem("username", name);
+      window.location.href = "rooms.html";
+    }
+
+    btn.onclick = enterChat;
+    input.addEventListener("keydown", e => {
+      if (e.key === "Enter") enterChat();
+    });
+  </script>
+
+</body>
+</html>

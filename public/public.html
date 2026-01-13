@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Public Room</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+  <!-- Styles -->
+  <link rel="stylesheet" href="css/style.css" />
+</head>
+
+<body>
+
+<header class="chat-header">
+  <button id="exitBtn" class="icon-btn" title="Back">←</button>
+  <div class="room-title">Public Room</div>
+  <button id="menuBtn" class="icon-btn" title="Members">☰</button>
+</header>
+
+<!-- Online members -->
+<div id="members" class="members hidden"></div>
+
+<!-- Messages -->
+<main id="messages" class="messages"></main>
+
+<!-- Voice preview -->
+<div id="voicePreview" class="voice-preview hidden">
+  <audio id="voiceAudio" controls></audio>
+  <button id="sendVoiceBtn" class="send-btn">Send</button>
+  <button id="cancelVoiceBtn" class="icon-btn">✖</button>
+</div>
+
+<!-- Typing indicator -->
+<div id="typingIndicator" class="typing-indicator hidden"></div>
+
+<!-- Upload progress -->
+<div id="uploadProgress" class="upload-progress hidden">
+  <div id="uploadBar"></div>
+</div>
+
+<!-- Input bar -->
+<footer class="chat-input">
+  <button id="fileBtn" class="icon-btn" title="Send file">📎</button>
+  <button id="voiceBtn" class="icon-btn" title="Record voice">🎤</button>
+
+  <input
+    id="msgInput"
+    type="text"
+    placeholder="Type a message…"
+    autocomplete="off"
+  />
+
+  <button id="sendBtn" class="send-btn" title="Send">➤</button>
+</footer>
+
+<input type="file" id="fileInput" hidden />
+
+<!-- Socket.IO -->
+<script src="/socket.io/socket.io.js"></script>
+
+<!-- Public chat logic -->
+<script src="js/public.js"></script>
+
+</body>
+</html>

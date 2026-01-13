@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Select Room</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <link rel="stylesheet" href="css/style.css" />
+</head>
+
+<body class="rooms-page">
+
+  <div class="rooms-card">
+    <h2>Select Room</h2>
+
+    <button id="publicBtn">Public</button>
+    <button id="privateBtn">Private</button>
+  </div>
+
+  <script>
+    document.getElementById("publicBtn").onclick = () => {
+      window.location.href = "public.html";
+    };
+
+    document.getElementById("privateBtn").onclick = () => {
+      alert("Private chat coming next 🚀");
+    };
+  </script>
+
+</body>
+</html>
